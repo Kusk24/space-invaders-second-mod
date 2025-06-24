@@ -24,7 +24,18 @@ public class Game extends JFrame  {
 
     public void initScene1(){
         getContentPane().removeAll();
-        getContentPane().add(new Scene1());
+        Scene1 scene1 = new Scene1();
+        getContentPane().add(scene1);
+        scene1.requestFocusInWindow();
+        revalidate();
+        repaint();
+    }
+
+    public void initScene2(){
+        getContentPane().removeAll();
+        gdd.scene.Scene2 scene2 = new gdd.scene.Scene2();
+        getContentPane().add(scene2);
+        scene2.requestFocusInWindow();
         revalidate();
         repaint();
     }

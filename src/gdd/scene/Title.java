@@ -55,8 +55,8 @@ public class Title extends JPanel {
 
         // initialise the audio
         try {
-            audioPlayer = new AudioPlayer("src/audio/title.wav");
-            audioPlayer.play();
+//            audioPlayer = new AudioPlayer("src/audio/title.wav");
+//            audioPlayer.play();
         } catch (Exception e) {
             System.err.println("Error loading audio: " + e.getMessage());
         }
@@ -116,7 +116,7 @@ public class Title extends JPanel {
             if (key == KeyEvent.VK_SPACE) {
                 System.out.println("Detected Spacebar");
                 Game game = (Game) getTopLevelAncestor(); // Get the parent Game instance
-                game.initScene1(); // Switch to Scene1
+                game.initScene2(); // Switch to Scene1
             }
         }
     }
