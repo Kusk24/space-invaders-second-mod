@@ -25,7 +25,8 @@ public class Scene2 extends JPanel {
     private List<Shot> shots;
     private Player player;
     // private Shot shot;
-    private List<Alien1> aliens;
+    private List<Alien1> aleins1;
+    private List<Alien2> aleins2;
     private Map<Integer, List<SpawnDetails>> spawnMap;
     private int frame = 0; // track the current frame
     private List<SpawnDetails> sdList;
@@ -61,12 +62,13 @@ public class Scene2 extends JPanel {
 
     private void gameInit() {
 
-        aliens = new ArrayList<>();
+        aleins1 = new ArrayList<>();
         explosions = new ArrayList<>();
         shots = new ArrayList<>();
-        aliens = new ArrayList<>();
+        aleins1 = new ArrayList<>();
         spawnMap = new HashMap<>();
         sdList = new ArrayList<>();
+        aleins2 = new ArrayList<>();
 
 
 //        for (int i = 0; i < 24; i++) {
@@ -90,17 +92,41 @@ public class Scene2 extends JPanel {
             );
         }
 
+        for (int i = 0; i < 24; i++) {
+            int randomX = randomizer.nextInt(9)*50;
+            spawnMap.put(200 * i , List.of(
+                    new SpawnDetails("Alien2", 100+randomX, 50),
+                    new SpawnDetails("Alien2", 150+randomX, 50 )
+//                    ,new SpawnDetails("Alien1", 200+randomX, 50 ),
+//                    new SpawnDetails("Alien1", 250+randomX, 50 )
+                    )
+            );
+        }
+
 //        var alien = new Alien1(ALIEN_INIT_X + (ALIEN_WIDTH + ALIEN_GAP),
 //                ALIEN_INIT_Y + (ALIEN_HEIGHT + ALIEN_GAP));
-//        aliens.add(alien);
+//        aleins1.add(alien);
 
         player = new Player();
         // shot = new Shot();
     }
 
-    private void drawAliens(Graphics g) {
+    private void drawaleins(Graphics g) {
 
-        for (Alien1 alien : aliens) {
+        for (Alien1 alien : aleins1) {
+
+            if (alien.isVisible()) {
+
+                g.drawImage(alien.getImage(), alien.getX(), alien.getY(), this);
+            }
+
+            if (alien.isDying()) {
+
+                alien.die();
+            }
+        }
+
+        for (Alien2 alien : aleins2) {
 
             if (alien.isVisible()) {
 
@@ -140,7 +166,7 @@ public class Scene2 extends JPanel {
 
     private void drawBombing(Graphics g) {
 
-        for (Alien1 e : aliens) {
+        for (Alien1 e : aleins1) {
 
             Alien1.Bomb b = e.getBomb();
 
@@ -192,7 +218,7 @@ public class Scene2 extends JPanel {
                     BOARD_WIDTH, GROUND);
 
             drawExplosions(g);
-            drawAliens(g);
+            drawaleins(g);
             drawPlayer(g);
             drawShot(g);
             drawBombing(g);
@@ -241,11 +267,11 @@ public class Scene2 extends JPanel {
         if (spawnMap.containsKey(frame)) {
             for (SpawnDetails sd : spawnMap.get(frame)) {
                 if (sd.type.equals("Alien1")) {
-                    aliens.add(new Alien1(sd.X, sd.Y));
+                    aleins1.add(new Alien1(sd.X, sd.Y));
                 }
-//                else if (sd.type.equals("Alien2")) {
-//                    enemies.add(new Alien2(sd.x, sd.y));
-//                }
+                else if (sd.type.equals("Alien2")) {
+                    aleins2.add(new Alien2(sd.X, sd.Y));
+                }
             }
         }
 
@@ -266,7 +292,28 @@ public class Scene2 extends JPanel {
                 int shotX = shot.getX();
                 int shotY = shot.getY();
 
-                for (Alien1 alien : aliens) {
+                for (Alien1 alien : aleins1) {
+                    // Collision detection: shot and alien
+                    int alienX = alien.getX();
+                    int alienY = alien.getY();
+
+                    if (alien.isVisible() && shot.isVisible()
+                            && shotX >= (alienX)
+                            && shotX <= (alienX + ALIEN_WIDTH)
+                            && shotY >= (alienY)
+                            && shotY <= (alienY + ALIEN_HEIGHT)) {
+
+                        var ii = new ImageIcon(IMG_EXPLOSION);
+                        alien.setImage(ii.getImage());
+                        alien.setDying(true);
+                        explosions.add(new Explosion(alienX, alienY));
+                        deaths++;
+                        shot.die();
+                        shotsToRemove.add(shot);
+                    }
+                }
+
+                for (Alien2 alien : aleins2) {
                     // Collision detection: shot and alien
                     int alienX = alien.getX();
                     int alienY = alien.getY();
@@ -301,8 +348,8 @@ public class Scene2 extends JPanel {
         }
         shots.removeAll(shotsToRemove);
 
-        // aliens
-        for (Alien1 alien : aliens) {
+        // aleins1
+        for (Alien1 alien : aleins1) {
 
             int x = alien.getX();
 //            if (frame%40 == 0){
@@ -313,7 +360,7 @@ public class Scene2 extends JPanel {
 
                 direction = -1;
 
-                for (Alien1 e2 : aliens) {
+                for (Alien1 e2 : aleins1) {
                     e2.setY(e2.getY() + GO_DOWN);
                 }
             }
@@ -322,13 +369,40 @@ public class Scene2 extends JPanel {
 
                 direction = 1;
 
-                for (Alien1 e : aliens) {
+                for (Alien1 e : aleins1) {
                     e.setY(e.getY() + GO_DOWN);
                 }
             }
         }
 
-        for (Alien1 alien : aliens) {
+        // aleins2
+        for (Alien2 alien : aleins2) {
+
+            int x = alien.getX();
+//            if (frame%40 == 0){
+//                alien.setY(alien.getY()+GO_DOWN);
+//            }
+
+            if (x >= BOARD_WIDTH - BORDER_RIGHT && direction != -1) {
+
+                direction = -1;
+
+                for (Alien2 e2 : aleins2) {
+                    e2.setY(e2.getY() + GO_DOWN);
+                }
+            }
+
+            if (x <= BORDER_LEFT && direction != 1) {
+
+                direction = 1;
+
+                for (Alien2 e : aleins2) {
+                    e.setY(e.getY() + GO_DOWN);
+                }
+            }
+        }
+
+        for (Alien1 alien : aleins1) {
             if (alien.isVisible()) {
 
                 int y = alien.getY();
@@ -342,11 +416,63 @@ public class Scene2 extends JPanel {
             }
         }
 
-        // bombs
-        for (Alien1 alien : aliens) {
+        for (Alien2 alien : aleins2) {
+            if (alien.isVisible()) {
+
+                int y = alien.getY();
+
+                if (y > GROUND - ALIEN_HEIGHT) {
+                    inGame = false;
+                    message = "Invasion!";
+                }
+
+                alien.act(direction);
+            }
+        }
+
+        // bombs aliens1
+        for (Alien1 alien : aleins1) {
 
             int chance = randomizer.nextInt(15);
             Alien1.Bomb bomb = alien.getBomb();
+
+            if (chance == CHANCE && alien.isVisible() && bomb.isDestroyed()) {
+
+                bomb.setDestroyed(false);
+                bomb.setX(alien.getX());
+                bomb.setY(alien.getY());
+            }
+
+            int bombX = bomb.getX();
+            int bombY = bomb.getY();
+            int playerX = player.getX();
+            int playerY = player.getY();
+
+            if (player.isVisible() && !bomb.isDestroyed()
+                    && bombX >= (playerX)
+                    && bombX <= (playerX + PLAYER_WIDTH)
+                    && bombY >= (playerY)
+                    && bombY <= (playerY + PLAYER_HEIGHT)) {
+
+                var ii = new ImageIcon(IMG_EXPLOSION);
+                player.setImage(ii.getImage());
+                player.setDying(true);
+                bomb.setDestroyed(true);
+            }
+
+            if (!bomb.isDestroyed()) {
+                bomb.setY(bomb.getY() + 1);
+                if (bomb.getY() >= GROUND - BOMB_HEIGHT) {
+                    bomb.setDestroyed(true);
+                }
+            }
+        }
+
+        // bombs for aliens2
+        for (Alien2 alien : aleins2) {
+
+            int chance = randomizer.nextInt(15);
+            Alien2.Bomb bomb = alien.getBomb();
 
             if (chance == CHANCE && alien.isVisible() && bomb.isDestroyed()) {
 
