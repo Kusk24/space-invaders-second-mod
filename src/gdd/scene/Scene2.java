@@ -69,8 +69,25 @@ public class Scene2 extends JPanel {
         sdList = new ArrayList<>();
 
 
+//        for (int i = 0; i < 24; i++) {
+//            spawnMap.put(80*i, List.of(new SpawnDetails("Alien1", 100+(randomizer.nextInt(9)*80), 50)));
+//        }
+
+        spawnMap.put(80 , List.of(
+                new SpawnDetails("Alien1", 100, 50),
+                new SpawnDetails("Alien1", 150, 50 ),
+                new SpawnDetails("Alien1", 200, 50 ),
+                new SpawnDetails("Alien1", 250, 50 ))
+        );
+
         for (int i = 0; i < 24; i++) {
-            spawnMap.put(80*i, List.of(new SpawnDetails("Alien1", 100+(randomizer.nextInt(9)*80), 50)));
+            int randomX = randomizer.nextInt(9)*50;
+            spawnMap.put(300 * i , List.of(
+                    new SpawnDetails("Alien1", 100+randomX, 50),
+                    new SpawnDetails("Alien1", 150+randomX, 50 ),
+                    new SpawnDetails("Alien1", 200+randomX, 50 ),
+                    new SpawnDetails("Alien1", 250+randomX, 50 ))
+            );
         }
 
 //        var alien = new Alien1(ALIEN_INIT_X + (ALIEN_WIDTH + ALIEN_GAP),
@@ -213,7 +230,13 @@ public class Scene2 extends JPanel {
 
     private void update() {
 
+        System.out.println("Frame: " + frame);
+
         frame++;
+
+//        if (frame > 80){
+//            frame = 0;
+//        }
 
         if (spawnMap.containsKey(frame)) {
             for (SpawnDetails sd : spawnMap.get(frame)) {
@@ -282,9 +305,9 @@ public class Scene2 extends JPanel {
         for (Alien1 alien : aliens) {
 
             int x = alien.getX();
-            if (frame%40 == 0){
-                alien.setY(alien.getY()+GO_DOWN);
-            }
+//            if (frame%40 == 0){
+//                alien.setY(alien.getY()+GO_DOWN);
+//            }
 
             if (x >= BOARD_WIDTH - BORDER_RIGHT && direction != -1) {
 

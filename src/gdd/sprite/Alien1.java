@@ -8,6 +8,6 @@ public class Alien1 extends Enemy{
 
     @Override
     public void act(int direction) {
-        this.x += direction+1;
+        this.y += 1;
     }
 }
