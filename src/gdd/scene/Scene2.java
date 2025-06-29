@@ -2,6 +2,7 @@ package gdd.scene;
 
 import static gdd.Global.*;
 
+import gdd.AudioPlayer;
 import gdd.SpawnDetails;
 import gdd.sprite.*;
 
@@ -14,7 +15,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.*;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -30,6 +34,7 @@ public class Scene2 extends JPanel {
     private Map<Integer, List<SpawnDetails>> spawnMap;
     private int frame = 0; // track the current frame
     private List<SpawnDetails> sdList;
+    private AudioPlayer audioPlayer;
 
     private int direction = -1;
     private int deaths = 0;
@@ -172,6 +177,13 @@ public class Scene2 extends JPanel {
 
             if (!b.isDestroyed()) {
 
+                g.drawImage(b.getImage(), b.getX(), b.getY(), this);
+            }
+        }
+
+        for (Alien2 e : aleins2) {
+            Alien2.Bomb b = e.getBomb();
+            if (!b.isDestroyed()) {
                 g.drawImage(b.getImage(), b.getX(), b.getY(), this);
             }
         }
@@ -526,6 +538,14 @@ public class Scene2 extends JPanel {
         public void keyReleased(KeyEvent e) {
 
             player.keyReleased(e);
+
+            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                try {
+                    audioPlayer.stop();
+                } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
         }
 
         @Override
@@ -544,6 +564,12 @@ public class Scene2 extends JPanel {
                     // Create a new shot and add it to the list
                     Shot shot = new Shot(x, y);
                     shots.add(shot);
+                    try {
+                        audioPlayer = new AudioPlayer("src/audio/laser.wav");
+                        audioPlayer.play();
+                    } catch (Exception ex) {
+                        System.err.println("Error loading audio: " + ex.getMessage());
+                    }
                 }
             }
         }

@@ -55,8 +55,8 @@ public class Title extends JPanel {
 
         // initialise the audio
         try {
-//            audioPlayer = new AudioPlayer("src/audio/title.wav");
-//            audioPlayer.play();
+            audioPlayer = new AudioPlayer("src/audio/title.wav");
+            audioPlayer.play();
         } catch (Exception e) {
             System.err.println("Error loading audio: " + e.getMessage());
         }
