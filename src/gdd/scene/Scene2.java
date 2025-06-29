@@ -87,9 +87,9 @@ public class Scene2 extends JPanel {
                 new SpawnDetails("Alien1", 250, 50 ))
         );
 
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < 6; i++) {
             int randomX = randomizer.nextInt(9)*50;
-            spawnMap.put(300 * i , List.of(
+            spawnMap.put(299 * i , List.of(
                     new SpawnDetails("Alien1", 100+randomX, 50),
                     new SpawnDetails("Alien1", 150+randomX, 50 ),
                     new SpawnDetails("Alien1", 200+randomX, 50 ),
@@ -97,7 +97,7 @@ public class Scene2 extends JPanel {
             );
         }
 
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < 6; i++) {
             int randomX = randomizer.nextInt(9)*50;
             spawnMap.put(200 * i , List.of(
                     new SpawnDetails("Alien2", 100+randomX, 50),
@@ -598,7 +598,7 @@ public class Scene2 extends JPanel {
             explosionAudioPlayer.play();
 
             // Create a timer to stop the explosion sound after 1 second
-            Timer explosionTimer = new Timer(800, new ActionListener() {
+            Timer explosionTimer = new Timer(600, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
