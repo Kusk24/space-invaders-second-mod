@@ -58,11 +58,11 @@ public class Player extends Sprite {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_LEFT) {
-            dx = -4;
+            dx = -5;
         }
 
         if (key == KeyEvent.VK_RIGHT) {
-            dx = 4;
+            dx = 5;
         }
     }
 
