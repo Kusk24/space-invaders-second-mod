@@ -34,7 +34,9 @@ public class Scene2 extends JPanel {
     private Map<Integer, List<SpawnDetails>> spawnMap;
     private int frame = 0; // track the current frame
     private List<SpawnDetails> sdList;
-    private AudioPlayer audioPlayer;
+    private AudioPlayer backgroundAudioPlayer;
+    private AudioPlayer laserAudioPlayer;
+    private AudioPlayer explosionAudioPlayer;
 
     private int direction = -1;
     private int deaths = 0;
@@ -114,6 +116,13 @@ public class Scene2 extends JPanel {
 
         player = new Player();
         // shot = new Shot();
+
+        try {
+            backgroundAudioPlayer = new AudioPlayer("src/audio/scene2.wav");
+            backgroundAudioPlayer.play();
+        } catch (Exception e) {
+            System.err.println("Error loading audio: " + e.getMessage());
+        }
     }
 
     private void drawaleins(Graphics g) {
@@ -541,7 +550,7 @@ public class Scene2 extends JPanel {
 
             if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                 try {
-                    audioPlayer.stop();
+                    laserAudioPlayer.stop();
                 } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -565,8 +574,8 @@ public class Scene2 extends JPanel {
                     Shot shot = new Shot(x, y);
                     shots.add(shot);
                     try {
-                        audioPlayer = new AudioPlayer("src/audio/laser.wav");
-                        audioPlayer.play();
+                        laserAudioPlayer = new AudioPlayer("src/audio/laser.wav");
+                        laserAudioPlayer.play();
                     } catch (Exception ex) {
                         System.err.println("Error loading audio: " + ex.getMessage());
                     }

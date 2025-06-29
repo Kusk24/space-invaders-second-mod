@@ -15,6 +15,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -115,6 +118,17 @@ public class Title extends JPanel {
             int key = e.getKeyCode();
             if (key == KeyEvent.VK_SPACE) {
                 System.out.println("Detected Spacebar");
+                if (audioPlayer != null) {
+                    try {
+                        audioPlayer.stop(); // Stop the title audio
+                    } catch (UnsupportedAudioFileException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (LineUnavailableException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
                 Game game = (Game) getTopLevelAncestor(); // Get the parent Game instance
                 game.initScene2(); // Switch to Scene1
             }
