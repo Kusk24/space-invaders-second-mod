@@ -24,13 +24,23 @@ public class Enemy extends Sprite {
 
         bomb = new Bomb(x, y);
 
-        var ii = new ImageIcon(IMG_ENEMY);
+//        var ii = new ImageIcon(IMG_ENEMY);
+//
+//        // Scale the image to use the global scaling factor
+//        var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth() * SCALE_FACTOR,
+//                ii.getIconHeight() * SCALE_FACTOR,
+//                java.awt.Image.SCALE_SMOOTH);
+//        setImage(scaledImage);
 
-        // Scale the image to use the global scaling factor
-        var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth() * SCALE_FACTOR,
-                ii.getIconHeight() * SCALE_FACTOR,
-                java.awt.Image.SCALE_SMOOTH);
-        setImage(scaledImage);
+        try {
+            BufferedImage enemyImg = ImageIO.read(new File(IMG_ENEMY));
+            var scaledImage = enemyImg.getScaledInstance(enemyImg.getWidth() * SCALE_FACTOR,
+                    enemyImg.getHeight() * SCALE_FACTOR,
+                    java.awt.Image.SCALE_SMOOTH);
+            setImage(scaledImage);
+        } catch (IOException e) {
+            System.err.println("Error loading explosion image: " + e.getMessage());
+        }
     }
 
     public void act(int direction) {
