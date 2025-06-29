@@ -598,7 +598,7 @@ public class Scene2 extends JPanel {
             explosionAudioPlayer.play();
 
             // Create a timer to stop the explosion sound after 1 second
-            Timer explosionTimer = new Timer(600, new ActionListener() {
+            Timer explosionTimer = new Timer(450, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
