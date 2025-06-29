@@ -87,9 +87,9 @@ public class Scene2 extends JPanel {
                 new SpawnDetails("Alien1", 250, 50 ))
         );
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 1; i < 7; i++) {
             int randomX = randomizer.nextInt(9)*50;
-            spawnMap.put(299 * i , List.of(
+            spawnMap.put(300 * i + 1 , List.of(
                     new SpawnDetails("Alien1", 100+randomX, 50),
                     new SpawnDetails("Alien1", 150+randomX, 50 ),
                     new SpawnDetails("Alien1", 200+randomX, 50 ),
@@ -97,9 +97,9 @@ public class Scene2 extends JPanel {
             );
         }
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 1; i < 7; i++) {
             int randomX = randomizer.nextInt(9)*50;
-            spawnMap.put(200 * i , List.of(
+            spawnMap.put(210 * i + 2 , List.of(
                     new SpawnDetails("Alien2", 100+randomX, 50),
                     new SpawnDetails("Alien2", 150+randomX, 50 )
                     )
