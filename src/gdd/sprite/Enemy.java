@@ -1,7 +1,12 @@
 package gdd.sprite;
 
 import static gdd.Global.*;
+
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class Enemy extends Sprite {
 
@@ -54,8 +59,12 @@ public class Enemy extends Sprite {
             this.y = y;
 
             var bombImg = "src/images/bomb.png";
-            var ii = new ImageIcon(bombImg);
-            setImage(ii.getImage());
+            try {
+                BufferedImage explosionImg = ImageIO.read(new File(bombImg));
+                setImage(explosionImg);
+            } catch (IOException e) {
+                System.err.println("Error loading explosion image: " + e.getMessage());
+            }
         }
 
         public void setDestroyed(boolean destroyed) {

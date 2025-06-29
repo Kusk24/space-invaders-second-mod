@@ -2,6 +2,10 @@ package gdd.sprite;
 
 import static gdd.Global.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Player extends Sprite {
@@ -15,13 +19,24 @@ public class Player extends Sprite {
     }
 
     private void initPlayer() {
-        var ii = new ImageIcon(IMG_PLAYER);
 
-        // Scale the image to use the global scaling factor
-        var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth() * SCALE_FACTOR,
-                ii.getIconHeight() * SCALE_FACTOR,
-                java.awt.Image.SCALE_SMOOTH);
-        setImage(scaledImage);
+//        var ii = new ImageIcon(IMG_PLAYER);
+//
+//        // Scale the image to use the global scaling factor
+//        var scaledImage = ii.getImage().getScaledInstance(ii.getIconWidth() * SCALE_FACTOR,
+//                ii.getIconHeight() * SCALE_FACTOR,
+//                java.awt.Image.SCALE_SMOOTH);
+//        setImage(scaledImage);
+
+        try {
+            BufferedImage playerImg = ImageIO.read(new File(IMG_PLAYER));
+            var scaledImage = playerImg.getScaledInstance(playerImg.getWidth() * SCALE_FACTOR,
+                    playerImg.getHeight() * SCALE_FACTOR,
+                    java.awt.Image.SCALE_SMOOTH);
+            setImage(scaledImage);
+        } catch (IOException e) {
+            System.err.println("Error loading explosion image: " + e.getMessage());
+        }
 
         setX(START_X);
         setY(START_Y);

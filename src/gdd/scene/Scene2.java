@@ -15,8 +15,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
@@ -77,11 +80,6 @@ public class Scene2 extends JPanel {
         sdList = new ArrayList<>();
         aleins2 = new ArrayList<>();
 
-
-//        for (int i = 0; i < 24; i++) {
-//            spawnMap.put(80*i, List.of(new SpawnDetails("Alien1", 100+(randomizer.nextInt(9)*80), 50)));
-//        }
-
         spawnMap.put(80 , List.of(
                 new SpawnDetails("Alien1", 100, 50),
                 new SpawnDetails("Alien1", 150, 50 ),
@@ -104,15 +102,9 @@ public class Scene2 extends JPanel {
             spawnMap.put(200 * i , List.of(
                     new SpawnDetails("Alien2", 100+randomX, 50),
                     new SpawnDetails("Alien2", 150+randomX, 50 )
-//                    ,new SpawnDetails("Alien1", 200+randomX, 50 ),
-//                    new SpawnDetails("Alien1", 250+randomX, 50 )
                     )
             );
         }
-
-//        var alien = new Alien1(ALIEN_INIT_X + (ALIEN_WIDTH + ALIEN_GAP),
-//                ALIEN_INIT_Y + (ALIEN_HEIGHT + ALIEN_GAP));
-//        aleins1.add(alien);
 
         player = new Player();
         // shot = new Shot();
@@ -324,10 +316,15 @@ public class Scene2 extends JPanel {
                             && shotY >= (alienY)
                             && shotY <= (alienY + ALIEN_HEIGHT)) {
 
-                        var ii = new ImageIcon(IMG_EXPLOSION);
-                        alien.setImage(ii.getImage());
+                        try {
+                            BufferedImage explosionImg = ImageIO.read(new File(IMG_EXPLOSION));
+                            alien.setImage(explosionImg);
+                        } catch (IOException e) {
+                            System.err.println("Error loading explosion image: " + e.getMessage());
+                        }
                         alien.setDying(true);
-                        explosions.add(new Explosion(alienX, alienY));
+                        explosions.add(new Explosion(alienX, alienY));  // Only Alien1 adds to explosions list
+                        playExplosionSound();
                         deaths++;
                         shot.die();
                         shotsToRemove.add(shot);
@@ -345,10 +342,15 @@ public class Scene2 extends JPanel {
                             && shotY >= (alienY)
                             && shotY <= (alienY + ALIEN_HEIGHT)) {
 
-                        var ii = new ImageIcon(IMG_EXPLOSION);
-                        alien.setImage(ii.getImage());
+                        try {
+                            BufferedImage explosionImg = ImageIO.read(new File(IMG_EXPLOSION));
+                            alien.setImage(explosionImg);
+                        } catch (IOException e) {
+                            System.err.println("Error loading explosion image: " + e.getMessage());
+                        }
                         alien.setDying(true);
                         explosions.add(new Explosion(alienX, alienY));
+                        playExplosionSound();
                         deaths++;
                         shot.die();
                         shotsToRemove.add(shot);
@@ -475,8 +477,12 @@ public class Scene2 extends JPanel {
                     && bombY >= (playerY)
                     && bombY <= (playerY + PLAYER_HEIGHT)) {
 
-                var ii = new ImageIcon(IMG_EXPLOSION);
-                player.setImage(ii.getImage());
+                try {
+                    BufferedImage explosionImg = ImageIO.read(new File(IMG_EXPLOSION));
+                    player.setImage(explosionImg);
+                } catch (IOException e) {
+                    System.err.println("Error loading explosion image: " + e.getMessage());
+                }
                 player.setDying(true);
                 bomb.setDestroyed(true);
             }
@@ -513,8 +519,12 @@ public class Scene2 extends JPanel {
                     && bombY >= (playerY)
                     && bombY <= (playerY + PLAYER_HEIGHT)) {
 
-                var ii = new ImageIcon(IMG_EXPLOSION);
-                player.setImage(ii.getImage());
+                try {
+                    BufferedImage explosionImg = ImageIO.read(new File(IMG_EXPLOSION));
+                    player.setImage(explosionImg);
+                } catch (IOException e) {
+                    System.err.println("Error loading explosion image: " + e.getMessage());
+                }
                 player.setDying(true);
                 bomb.setDestroyed(true);
             }
@@ -548,13 +558,13 @@ public class Scene2 extends JPanel {
 
             player.keyReleased(e);
 
-            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                try {
-                    laserAudioPlayer.stop();
-                } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
+//            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+//                try {
+//                    laserAudioPlayer.stop();
+//                } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+//                    throw new RuntimeException(ex);
+//                }
+//            }
         }
 
         @Override
@@ -573,14 +583,69 @@ public class Scene2 extends JPanel {
                     // Create a new shot and add it to the list
                     Shot shot = new Shot(x, y);
                     shots.add(shot);
-                    try {
-                        laserAudioPlayer = new AudioPlayer("src/audio/laser.wav");
-                        laserAudioPlayer.play();
-                    } catch (Exception ex) {
-                        System.err.println("Error loading audio: " + ex.getMessage());
-                    }
+                    playLaserSound();
                 }
             }
+        }
+    }
+
+    private void playExplosionSound() {
+        try {
+            if (explosionAudioPlayer != null) {
+                explosionAudioPlayer.stop();
+            }
+            explosionAudioPlayer = new AudioPlayer("src/audio/explosion.wav");
+            explosionAudioPlayer.play();
+
+            // Create a timer to stop the explosion sound after 1 second
+            Timer explosionTimer = new Timer(800, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        if (explosionAudioPlayer != null) {
+                            explosionAudioPlayer.stop();
+                        }
+                    } catch (Exception ex) {
+                        System.err.println("Error stopping explosion audio: " + ex.getMessage());
+                    }
+                    ((Timer) e.getSource()).stop(); // Stop the timer itself
+                }
+            });
+            explosionTimer.setRepeats(false); // Only run once
+            explosionTimer.start();
+
+        } catch (Exception ex) {
+            System.err.println("Error loading explosion audio: " + ex.getMessage());
+        }
+    }
+
+    private void playLaserSound() {
+        try {
+            if (laserAudioPlayer != null) {
+                laserAudioPlayer.stop();
+            }
+            laserAudioPlayer = new AudioPlayer("src/audio/laser.wav");
+            laserAudioPlayer.play();
+
+            // Create a timer to stop the explosion sound after 1 second
+            Timer laserTimer = new Timer(400, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try {
+                        if (laserAudioPlayer != null) {
+                            laserAudioPlayer.stop();
+                        }
+                    } catch (Exception ex) {
+                        System.err.println("Error stopping laser audio: " + ex.getMessage());
+                    }
+                    ((Timer) e.getSource()).stop(); // Stop the timer itself
+                }
+            });
+            laserTimer.setRepeats(false); // Only run once
+            laserTimer.start();
+
+        } catch (Exception ex) {
+            System.err.println("Error loading laser audio: " + ex.getMessage());
         }
     }
 }
